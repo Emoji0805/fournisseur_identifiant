@@ -1,0 +1,545 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: My App
+            description: This is an awesome app!
+            version: 1.0.0
+
+        paths:
+            /api/utilisateurs/{id}:
+                put:
+                    tags:
+                        - Utilisateur
+                    summary: Mise à jour d'un utilisateur par ID
+                    description: >
+                        Cette API permet de mettre à jour les informations d'un utilisateur
+                        en fonction de son ID.
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: L'ID de l'utilisateur à mettre à jour
+                          schema:
+                              type: integer
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        nom:
+                                            type: string
+                                            description: Le nouveau nom de l'utilisateur
+                                        motDePasse:
+                                            type: string
+                                            description: Le nouveau mot de passe de l'utilisateur
+                    responses:
+                        200:
+                            description: Utilisateur mis à jour avec succès
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: succés
+                                            message:
+                                                type: string
+                                                example: Utilisateur mis à jour avec succés
+                                            data:
+                                                type: object
+                                                properties:
+                                                    id:
+                                                        type: integer
+                                                        example: 1
+                                                    nom:
+                                                        type: string
+                                                        example: Nirina Isaia
+                                                    email:
+                                                        type: string
+                                                        example: isaia@gmail.com
+                                            error:
+                                                type: string
+                                                nullable: true
+                        404:
+                            description: Utilisateur non trouvé
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: Utilisateur non trouvé
+            
+#-------------------------------------------------------------------------------------------------------------------#
+
+            /api/send-mail:
+                post:
+                    tags:
+                        - Email
+                    summary: Envoi d'un e-mail de test
+                    description: >
+                        Cette API permet d'envoyer un e-mail de test en utilisant Symfony Mailer et se trouve dans le MailController
+                    responses:
+                        200:
+                            description: E-mail envoyé avec succès
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: succès
+                                            message:
+                                                type: string
+                                                example: E-mail envoyé avec succès
+                                            result:
+                                                type: string
+                                                example: "L'e-mail a été envoyé avec succès."
+                        500:
+                            description: Erreur d'envoi d'e-mail
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: erreur
+                                            message:
+                                                type: string
+                                                example: "Une erreur est survenue lors de l'envoi de l'e-mail."
+
+#-------------------------------------------------------------------------------------------------------------------#
+            /api/mfa/send-pin:
+                post:
+                    tags:
+                        - MFA
+                    summary: "Envoie un code PIN pour l'authentification multi-facteurs (MFA)"
+                    description: >
+                        Génère un code PIN, le stocke en session, et l'envoie à l'utilisateur par email.
+                    responses:
+                        '200':
+                            description: Succès
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: succés
+                                            message:
+                                                type: string
+                                                example: "Un code PIN a été envoyé à votre adresse email."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '400':
+                            description: Échec
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: échec
+                                            message:
+                                                type: string
+                                                example: "Une erreur est survenue lors de l'envoi du code PIN."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: "L'adresse email est invalide."
+                    requestBody:
+                        description: Aucune donnée n'est nécessaire dans la requête.
+                        required: false
+
+#----------------------------------------------------------------------------------------------------------------#
+            /api/test-mail:
+                post:
+                    tags:
+                        - Email
+                    summary: "Vérifie et valide un email avant de l'insérer comme étant un utilisateur"
+                    description: >
+                        Cette route permet de valider un email, de vérifier sa validité, 
+                        et d'insérer un utilisateur dans la base de données si l'email est valide.
+                    requestBody:
+                        description: Données nécessaires pour valider un email et créer un utilisateur.
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        email:
+                                            type: string
+                                            format: email
+                                            example: utilisateur@exemple.com
+                                        nom:
+                                            type: string
+                                            example: "Nom de l'utilisateur"
+                                        mdp:
+                                            type: string
+                                            example: "MotDePasse123"
+                    responses:
+                        '200':
+                            description: Succès
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: succés
+                                            message:
+                                                type: string
+                                                example: "réponse reçue true"
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '400':
+                            description: Échec de validation de l'email
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: échec
+                                            message:
+                                                type: string
+                                                example: "L'email fourni est invalide."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: "L'email utilisateur@exemple.com n'est pas valide."
+
+#----------------------------------------------------------------------------------------------------------------#
+            /api/login:
+                post:
+                    tags:
+                        - Login
+                    summary: "Connexion utilisateur"
+                    description: >
+                        Permet à un utilisateur de se connecter avec son email et mot de passe.
+                        Limite le nombre de tentatives de connexion pour protéger contre les attaques par force brute.
+                    requestBody:
+                        description: "Données nécessaires pour la tentative de connexion."
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        email:
+                                            type: string
+                                            format: email
+                                            example: utilisateur@exemple.com
+                                        motDePasse:
+                                            type: string
+                                            example: "MotDePasse123"
+                    responses:
+                        '200':
+                            description: Connexion réussie
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: succés
+                                            message:
+                                                type: string
+                                                example: "Connexion réussie"
+                                            data:
+                                                type: object
+                                                properties:
+                                                    id:
+                                                        type: integer
+                                                        example: 1
+                                                    nom:
+                                                        type: string
+                                                        example: "John Doe"
+                                                    email:
+                                                        type: string
+                                                        format: email
+                                                        example: utilisateur@exemple.com
+                                                    idrole:
+                                                        type: integer
+                                                        example: 2
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '401':
+                            description: Email ou mot de passe incorrect
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: échec
+                                            message:
+                                                type: string
+                                                example: "Email ou mot de passe incorrect. Il vous reste 2 tentative(s)."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '429':
+                            description: Trop de tentatives de connexion
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: échec
+                                            message:
+                                                type: string
+                                                example: >
+                                                    "Trop de tentatives de connexion. Veuillez réessayer dans 2 minute(s) et 30 seconde(s)."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+
+#----------------------------------------------------------------------------------------------------------------#
+
+            /mfa/verify-pin:
+                post:
+                    tags:
+                        - Login
+                    summary: "Vérification du code PIN MFA"
+                    description: >
+                        Vérifie le code PIN soumis pour compléter l'authentification multi-facteurs.
+                        Afin de mieux vérifier si c'est vraiment la personne 
+                    requestBody:
+                        description: "Données nécessaires pour vérifier le code PIN MFA."
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        pin:
+                                            type: string
+                                            example: "123456"
+                    responses:
+                        '200':
+                            description: "Vérification réussie du code PIN MFA"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: succés
+                                            message:
+                                                type: string
+                                                example: "PIN réussie"
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '401':
+                            description: "PIN incorrect"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: échec
+                                            message:
+                                                type: string
+                                                example: "PIN incorrect. Il vous reste 2 tentative(s)."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '429':
+                            description: "Trop de tentatives de PIN"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: échec
+                                            message:
+                                                type: string
+                                                example: "Trop de tentatives de PIN. Veuillez réessayer plus tard."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+
+#----------------------------------------------------------------------------------------------------------------#
+            /api/reset-session:
+                post:
+                    tags:
+                        - Login
+                    summary: "Réinitialiser les tentatives de session"
+                    description: >
+                        Réinitialise les tentatives de connexion pour un utilisateur basé sur son adresse IP et son email.
+                    requestBody:
+                        description: "Données nécessaires pour réinitialiser la session."
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    example: {}
+                    responses:
+                        '200':
+                            description: "Session réinitialisée avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: succés
+                                            message:
+                                                type: string
+                                                example: "La session pour l'utilisateur avec l'email 'user@example.com' et l'IP '192.168.1.1' a été réinitialisée."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '404':
+                            description: "Session non trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: échec
+                                            message:
+                                                type: string
+                                                example: "Aucune session trouvée pour l'utilisateur avec l'email 'user@example.com' et l'IP '192.168.1.1'."
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+#----------------------------------------------------------------------------------------------------------------#
+            /api/loginSession:
+                post:
+                    tags:
+                        - Session
+                    summary: "Authentifie l'utilisateur et initialise une session"
+                    description: >
+                        Cette API permet à un utilisateur de se connecter en utilisant son email et son mot de passe.
+                        Si l'authentification est réussie, une session est créée et des informations telles que l'ID utilisateur.
+                    requestBody:
+                        description: "Données nécessaires pour l'authentification."
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        email:
+                                            type: string
+                                            description: "Email de l'utilisateur."
+                                            example: "user@example.com"
+                                        password:
+                                            type: string
+                                            description: "Mot de passe de l'utilisateur."
+                                            example: "mypassword123"
+                    responses:
+                        '200':
+                            description: "Connexion réussie"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: "succés"
+                                            message:
+                                                type: string
+                                                example: "Logged in succésfully"
+                                            error:
+                                                type: string
+                                                nullable: true
+                                                example: null
+                        '400':
+                            description: "Données invalides ou utilisateur introuvable"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: string
+                                                example: "error"
+                                            message:
+                                                type: string
+                                                example: "Invalid credentials"
+                                            error:
+                                                type: object
+                                                properties:
+                                                    details:
+                                                        type: string
+                                                        example: "Vérifier si les choses que vous avez écrites sont correctes"
+
+#----------------------------------------------------------------------------------------------------------------#
+            /api/checkSession:
+                get:
+                    tags:
+                        - Session
+                    summary: "Vérifie si une session utilisateur est encore active"
+                    description: >
+                        Cette API permet de vérifier si une session utilisateur est encore active.
+                        Si la session a expiré ou n'existe pas, elle sera effacée et un message demandant
+                        de se reconnecter sera renvoyé.
+                    responses:
+                        '200':
+                            description: "Session encore active"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Session encore active"
+                        '401':
+                            description: "Session expirée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Session expirée. Go login !"
+
+
+    areas:
+        default:
+            path_patterns:
+                - ^/api 

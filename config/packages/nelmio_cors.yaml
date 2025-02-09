@@ -1,0 +1,16 @@
+nelmio_cors:
+    defaults:
+        allow_credentials: true
+        allow_origin: ['http://localhost:8080']  # Autorise les requêtes depuis ce domaine
+        allow_headers: ['Content-Type', 'Authorization']  # Autorise les headers nécessaires
+        allow_methods: ['GET', 'POST', 'OPTIONS']  # Méthodes acceptées
+        expose_headers: ['Authorization', 'Content-Length']  # Exposer certains headers au frontend
+        max_age: 3600  # Cache la réponse préflight pendant 1 heure
+
+    paths:
+        '^/api/':  # Spécifie que CORS s'applique à toutes les routes API
+            allow_origin: ['http://localhost:8080']
+            allow_methods: ['GET', 'POST', 'OPTIONS']
+            allow_headers: ['Content-Type', 'Authorization']
+            expose_headers: ['Authorization', 'Content-Length']
+            max_age: 3600

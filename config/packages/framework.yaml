@@ -1,0 +1,24 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    session:
+        handler_id: session.handler.native_file
+        storage_factory_id: session.storage.factory.native
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+        cookie_secure: auto
+        cookie_samesite: none   # Important pour que le cookie soit partagé entre différents domaines
+        cookie_lifetime: 0
+        gc_maxlifetime: 1440
+        name: MYSESSIONID   # Change le nom du cookie pour éviter les conflits
+
+
+    # Autres configurations
+    #esi: true
+    #fragments: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.native  # Utiliser des sessions réelles en test
+            handler_id: session.handler.native_file
+            save_path: '%kernel.project_dir%/var/sessions/test'

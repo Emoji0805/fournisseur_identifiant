@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <h1>Bienvenue sur la page d'accueil</h1>
+    <p>Ceci est votre page d'accueil par défaut.</p>
+    <a href="{{ path('dash') }}">Aller au tableau de bord</a>
+{% endblock %}
