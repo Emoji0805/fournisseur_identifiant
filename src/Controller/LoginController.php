@@ -57,7 +57,7 @@ class LoginController extends AbstractController
         // return new JsonResponse(['status' => 'success', 'message' => 'PIN envoyé']);
     }
     
-    wawa
+    
     #[Route('/api/login', name: 'login_utilisateur', methods: ['POST'])]
     public function login(Request $request): JsonResponse
     {
